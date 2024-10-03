@@ -8,7 +8,7 @@ A Python-based GUI application that checks the strength of passwords, verifies i
 - **Common Password Checker**: Checks if the entered password is among the 10,000 most common passwords by fetching the list from a GitHub repository.
 - **Password Generation**: Generates random, strong passwords that include lowercase, uppercase, digits, and symbols.
 - **Brute Force Estimation**: Estimates how long it would take to crack the password via slow and simple brute-force attacks.
-- **Historic Passwords**: Allows saving password hashes to a file and checking if a password hash has already been used.
+- **Saved Passwords**: Allows saving password hashes to a file and checking if a password hash has already been used.
 - **Simple UI**: Simple, aesthetic interface built using Tkinter,
 
 ## Installation
