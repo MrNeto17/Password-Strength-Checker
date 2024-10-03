@@ -21,7 +21,7 @@ A Python-based GUI application that checks the strength of passwords, verifies i
 ## Screenshots
 
 ### 1. Password Strength Check
-![Password Strength Check](sceenshots/resultes.png)
+![Password Strength Check](sceenshots/results.png)
 
 ### 2. Randomly Generated Password with Less Then 8 Characters
 ![Common Password Check](sceenshots/results2.png)
