@@ -21,13 +21,13 @@ A Python-based GUI application that checks the strength of passwords, verifies i
 ## Screenshots
 
 ### 1. Password Strength Check
-![Password Strength Check](sceenshots/results.png)
+![Password Strength Check](sceenshots/results2.png)
 
 ### 2. Randomly Generated Password with Less Then 8 Characters
-![Common Password Check](sceenshots/results2.png)
+![Common Password Check](sceenshots/results3.png)
 
 ### 3. Generated Secure Password 
-![Generated Password](sceenshots/result5.png)
+![Generated Password](sceenshots/reults.png)
 
 ### 4. Saved hashes from previous used passwords
 ![Generated Password](sceenshots/results4.png)
