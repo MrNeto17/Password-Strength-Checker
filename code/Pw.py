@@ -16,17 +16,18 @@ def fetch_common_passwords_from_github():
     except Exception as e:
         messagebox.showerror("Error", f"Failed to fetch passwords: {e}")
         return []
+        
+common_passwords = fetch_common_passwords_from_github()  
 
 #checking if is common
-def check_common_password(password):
-    common_passwords = fetch_common_passwords_from_github()  # Fetch passwords from GitHub
+def check_common_password(password): 
     if common_passwords:
         is_common = password.lower() in common_passwords
         return is_common
     return False
 
 # Strength parameters
-def check_password_strength(password, common_passwords):
+def check_password_strength(password):
     length_error = len(password) < 8
     digit_error = re.search(r"\d", password) is None
     uppercase_error = re.search(r"[A-Z]", password) is None
@@ -121,37 +122,50 @@ def check_historic_password(password):
     except FileNotFoundError:
         messagebox.showwarning("Warning", "No historic passwords file found.")
 
+def calculate_password_strength_score(password):
+    score = 0
+
+    # Criteria for scoring
+    if len(password) >= 8:
+        score += 1
+    if re.search(r"\d", password):  # Contains digit
+        score += 1
+    if re.search(r"[A-Z]", password):  # Contains uppercase
+        score += 1
+    if re.search(r"[a-z]", password):  # Contains lowercase
+        score += 1
+    if re.search(r"[!@#$%^&*()_+={}\[\]:;\"'|\\<>,.?/~`-]", password):  # Contains symbol
+        score += 1
+    
+    # Check if it's a common password (using any fetched list for common passwords)
+    if not check_common_password(password):  # Not common password
+        score += 1
+
+    return score
+ 
 # Function to check password from UI
 def check_password():
     password = entry_password.get()
     if not password:
         messagebox.showwarning("Input Error", "Please enter a password")
     else:
-        common_passwords = fetch_common_passwords_from_github()  # Fetch passwords from GitHub
-        if common_passwords:
-            is_strong, result = check_password_strength(password, common_passwords)
-            result_label.config(text=result, fg="green" if is_strong else "red")
+        # Calculate strength score
+        score = calculate_password_strength_score(password)
 
-            # Update strength meter based on results
-            if is_strong:
-                update_strength_meter("strong")
-            else:
-                # Determine if weak or medium
-                if len(password) < 10:
-                    update_strength_meter("weak")
-                else:
-                    update_strength_meter("medium")
+        # Update strength meter UI based on score
+        update_strength_meter(score)
 
-            # Estimate and display brute-force time
-            time_estimation = estimate_brute_force_time(password)
-            time_message = (
-                f"Estimated time to crack:\n"
-                f"🌟 {time_estimation['seconds']:.2f} seconds\n"
-                f"⏳ ~ {time_estimation['minutes']:.2f} minutes\n"
-                f"🕒 ~ {time_estimation['hours']:.2f} hours\n"
-                f"📅 ~ {time_estimation['days']:.2f} days"
-            )
-            time_label.config(text=time_message)
+        # Estimate and display brute-force time
+        time_estimation = estimate_brute_force_time(password)
+        time_message = (
+            f"Estimated time to crack:\n"
+            f"🌟 {time_estimation['seconds']:.2f} seconds\n"
+            f"⏳ ~ {time_estimation['minutes']:.2f} minutes\n"
+            f"🕒 ~ {time_estimation['hours']:.2f} hours\n"
+            f"📅 ~ {time_estimation['days']:.2f} days"
+         )
+    time_label.config(text=time_message)
+            
 
 # Generate and display a random password
 def generate_and_display_password():
@@ -172,15 +186,21 @@ def check_if_common():
         else:
             result_label.config(text="Password is not common.", fg="green")
 
-# Add this function to update the strength meter
-def update_strength_meter(strength):
+def update_strength_meter(score):
     strength_meter.delete("all")
-    if strength == "weak":
+    password = entry_password.get()
+    if score <= 2:
+        # Weak password
         strength_meter.create_rectangle(0, 0, 100, 20, fill="red")
-    elif strength == "medium":
+        strength_label.config(text=check_password_strength(password), fg ="red")
+    elif 3 <= score <= 4:
+        # Medium strength
         strength_meter.create_rectangle(0, 0, 200, 20, fill="orange")
-    elif strength == "strong":
+        strength_label.config(text="Medium", fg="orange")
+    elif score >= 5:
+        # Strong password
         strength_meter.create_rectangle(0, 0, 300, 20, fill="green")
+        strength_label.config(text="Strong", fg="green")
 
 # Setup Tkinter window
 root = tk.Tk()
@@ -247,6 +267,10 @@ strength_meter_label.pack(pady=5)
 # Strength meter canvas
 strength_meter = tk.Canvas(root, width=300, height=20, bg="#e0e0e0", bd=0, highlightthickness=0)
 strength_meter.pack(pady=5)
+
+# Strength label to display "Weak", "Medium", "Strong"
+strength_label = tk.Label(root, text="", font=("Helvetica", 12), bg="#f4f4f9", fg="#333333")
+strength_label.pack(pady=5)
 
 # Result label for feedback
 result_label = tk.Label(root, text="", font=("Helvetica", 12), bg="#f4f4f9", fg="#333333")
